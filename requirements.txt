@@ -1,5 +1,6 @@
 celery
 flask
+flask_sqlalchemy
 flask_wtf
 redis
 valkey
