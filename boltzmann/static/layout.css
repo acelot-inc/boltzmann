@@ -1,0 +1,68 @@
+header {
+  position: fixed;
+
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 30pt;
+  line-height: 30pt;
+
+  background-color: #444;
+  color: #ddd;
+  padding: 0 8pt;
+}
+
+header h1 {
+  font-size: 20pt;
+  margin: 0;
+}
+
+content {
+  position: fixed;
+
+  top: 30pt;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+content .center-column {
+  max-width: 6in;
+  margin: 0 auto;
+  text-align: center;
+}
+
+#screen {
+  position: fixed;
+
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  background-color: #000;
+  opacity: 65%;
+}
+
+#screen.hidden {
+  display: none;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  opacity: 100%;
+
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  background-color: #fff;
+  border-radius: 1em;
+
+  padding: 1em;
+}
+
+.modal.active {
+  display: block;
+}

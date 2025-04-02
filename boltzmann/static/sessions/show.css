@@ -1,0 +1,136 @@
+#jobs {
+  position: absolute;
+  background-color: #ccc;
+
+  top: 0;
+  left: 0;
+  width: 2in;
+  bottom: 0;
+}
+
+#jobs-header {
+  height: 3rem;
+  line-height: 3rem;
+  padding: 0pt 8pt;
+
+  background-color: #aaa;
+
+  font-size: 20pt;
+}
+
+#jobs-header > div {
+/* Float right with line-height set for alignment... */
+  float: right;
+  height: 3rem;
+  line-height: 3rem;
+}
+
+#jobs-header a {
+  display: inline-block;
+  height: 30pt;
+  width: 30pt;
+
+  background-color: #44f;
+  border-radius: 15pt;
+  color: #fff;
+  font-weight: bold;
+  line-height: 30pt;
+  text-decoration: none;
+  text-align: center;
+  vertical-align: middle;
+}
+
+#jobs-header a:hover {
+  background-color: #66f;
+}
+
+#job-list {
+  position: absolute;
+  top: 3rem;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  padding: 8pt;
+  overflow: scroll;
+
+  /* Scrollbar on the left! */
+  /* https://stackoverflow.com/a/7347646 */
+  direction: rtl;
+}
+
+#job-list .job {
+  background-color: #fff;
+  border: 2px solid #888;
+  border-radius: 6pt;
+  margin-bottom: 4pt;
+}
+
+#job-list .job .info {
+  padding: 8pt 0;
+  text-align: center;
+}
+
+#job-list .job.active {
+  background-color: #9cd;
+}
+
+#job-list .info {
+  width: 4em;
+  float: left;
+}
+
+#job-list canvas {
+  display: block;
+}
+
+
+#models {
+  position: absolute;
+  background-color: #ddd;
+
+  height: 36pt;
+  left: 2in;
+  right: 0;
+  bottom: 0;
+
+  line-height: 36pt;
+  overflow-x: auto;
+  padding: 0 1em;
+}
+
+#models a {
+  display: inline-block;
+  height: 2em;
+  line-height: 2em;
+  text-align: center;
+  width: 2em;
+
+  background-color: #fff;
+  border: 2px solid #888;
+  border-radius: 6pt;
+  margin: 0 1pt;
+
+  color: #222;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+#models a.active {
+  background-color: #9cd;
+}
+
+
+#viewer {
+  position: absolute;
+  background-color: #fff;
+
+  top: 0;
+  left: 2in;
+  right: 0;
+  bottom: 36pt;
+}
+
+#editor {
+  margin-bottom: 4pt;
+}

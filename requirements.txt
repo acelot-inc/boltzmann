@@ -1,0 +1,5 @@
+celery
+flask
+flask_wtf
+redis
+valkey

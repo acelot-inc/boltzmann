@@ -1,0 +1,64 @@
+{% extends "layout.html" %}
+
+{% block header %}
+<link rel="stylesheet" type="text/css" href="/static/sessions/show.css" />
+<script type="text/javascript" src="/static/ext/smiles-drawer-2.1.10.min.js" defer></script>
+<script type="text/javascript" src="/static/ext/3dmol/3Dmol-min.js" defer></script>
+<script type="text/javascript" src="/static/ext/3dmol/3Dmol.ui-min.js" defer></script>
+<script type="text/javascript" src="/static/sessions/show.js" defer></script>
+<script type="text/javascript" src="/static/ext/jsme/jsme/jsme.nocache.js" defer></script>
+<script type="text/javascript">
+  const API   = {{ url_for('apiv1.enqueue', session_id=session.id) | tojson }};
+  const STYLE = {
+{%- for protein in proteins %}
+    "{{ protein.name }}": {{ protein.style_data | tojson }}{% if not loop.last %},{% endif %}
+{% endfor -%}
+  };
+</script>
+{% endblock %}
+
+{% block content %}
+<div id="jobs">
+  <div id="job-list"></div>
+  <div id="jobs-header">
+    <div>
+      <a id="single-job-open" title="Enqueue" href="#">+</a>
+    </div>
+    Ligands
+  </div>
+  <template id="job-template">
+    <div class="job">
+      <div class="info">
+        <span class="name"></span>
+        <span class="protein"></span>
+        <span class="score"></td>
+      </div>
+      <canvas class="smiles" width="100" height="100"></canvas>
+    </div>
+  </template>
+</div>
+<div id="models">
+{%- for i in range(25) %}
+  <a href="#model-{{ i }}">{{ i }}</a>
+{% endfor -%}
+</div>
+<div id="viewer"></div>
+{% endblock %}
+
+{% block modals %}
+<div id="single-job-modal" class="modal">
+  <form id="single-job-form">
+    <div id="editor"></div>
+    <div>
+      <select name="protein_id" required>
+{%- for protein in proteins %}
+        <option value="{{ protein.id }}">{{ protein.name }}</option>
+{% endfor -%}
+      </select>
+      <input name="name" type="text" placeholder="Name" />
+      <button id="single-job-close" class="cancel">Cancel</button>
+      <button class="submit">Enqueue</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

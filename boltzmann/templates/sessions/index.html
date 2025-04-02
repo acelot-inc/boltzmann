@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+
+{% block header %}
+<style type="text/css">
+.card {
+  display: block;
+  margin-bottom: 8pt;
+
+
+  background-color: #ddd;
+  color: #444;
+
+  border: 2px solid #444;
+  border-radius: 12pt;
+
+  font-size: 24pt;
+  height: 48pt;
+  line-height: 48pt;
+}
+
+a.card {
+  text-decoration: none;
+}
+
+a.card:hover {
+  background-color: #ccc;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="center-column">
+  <h1>Sessions</h1>
+{% for session in sessions %}
+  <a class="card" href="{{ url_for('sessions.show', session_id=session.id) }}">
+    <span>{{ session.name }}</span>
+  </a>
+{% endfor %}
+  <div class="card">
+    <form method="POST">
+      {{ form.csrf_token }}
+      {{ form.name }}
+      <button action="submit">Create</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
