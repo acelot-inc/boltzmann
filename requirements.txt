@@ -2,5 +2,6 @@ celery
 flask
 flask_sqlalchemy
 flask_wtf
+psycopg2-binary
 redis
 valkey
