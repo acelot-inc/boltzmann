@@ -1,6 +1,13 @@
+import os
+
 import boltzmann.config
 
-config = boltzmann.config.get_config('DEV')
+confname = os.environ.get('BOLTZMANN_CONFIG')
+if not confname:
+    print('ERROR: Environment variable BOLTZMANN_CONFIG must be set.')
+    exit(1)
+
+config = boltzmann.config.get_config(confname)
 boltzmann.config.configure(config)
 
 flask_app  = boltzmann.config.flask_app
