@@ -1,23 +1,22 @@
 import glob
+import json
 import os
+import yaml
 
 from .config import flask_app
 from .models import db, Protein
 
-def readfile(path):
-    with open(path) as file:
-        return file.read()
-
 def seed():
-    with flask_app.app_context():
-        pattern  = flask_app.config['BOLTZ_PROTEINS'] + '/*'
-        proteins = []
-        for path in glob.glob(pattern):
-            db.session.add(Protein(
-                name     = readfile(path + '/name.txt').strip(),
-                sequence = readfile(path + '/sequence.txt').strip(),
-                style    = readfile(path + '/style.json'),
-                msa_file = os.path.basename(path) + '/msa.csv'
-            ))
+    root = os.path.dirname(flask_app.config['BOLTZ']['proteins'])
+    with open(flask_app.config['BOLTZ']['proteins']) as file:
+        data = yaml.safe_load(file)
 
-        db.session.commit()
+    for protein in data['proteins']:
+        db.session.add(Protein(
+            name     = protein['name'],
+            sequence = protein['sequence'],
+            style    = json.dumps(protein['style']),
+            msa_file = os.path.join(protein['msa_file'], root)
+        ))
+
+    db.session.commit()

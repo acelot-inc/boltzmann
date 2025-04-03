@@ -31,15 +31,8 @@ def configure(config):
     flask_app.config['WTF_CSRF_ENABLED']               = config['csrf']
     flask_app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-    flask_app.config['BOLTZ_PROTEINS'] = 'data/proteins'
-    flask_app.config['BOLTZ_WORKDIR']  = '/boltz/models'
-    flask_app.config['BOLTZ_CACHE']    = '/boltz/cache'
-
-    flask_app.config['CELERY'] = {
-        'broker_url':         'redis://localhost:6379/0',
-        'result_backend':     'redis://localhost:6379/0',
-        'task_ignore_result':  True
-    }
+    flask_app.config['BOLTZ']  = config['boltz']
+    flask_app.config['CELERY'] = config['celery']
 
     # Configure the DB...
     db.init_app(flask_app)
