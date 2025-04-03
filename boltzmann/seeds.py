@@ -7,6 +7,10 @@ from .config import flask_app
 from .models import db, Protein
 
 def seed():
+    if Protein.query.count() > 0:
+        print('Proteins already exist; skipping...')
+        return
+
     root = os.path.dirname(flask_app.config['BOLTZ']['proteins'])
     with open(flask_app.config['BOLTZ']['proteins']) as file:
         data = yaml.safe_load(file)
