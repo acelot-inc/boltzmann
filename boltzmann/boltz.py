@@ -84,7 +84,7 @@ def score_boltz(confidence_file):
 def score_vina(cif_file):
     pass
 
-def score_all(folder, name, diffusion_samples=25):
+def score_all(folder, name, diffusion_samples=1): #25):
     scores = [{'model_id': i} for i in range(diffusion_samples)]
     models = models_folder_for(folder, name)
     for i in range(diffusion_samples):

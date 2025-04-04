@@ -87,6 +87,6 @@ def score(docking_id):
         docking.scoring_status = 'finished'
     except Exception as e:
         print(traceback.format_exc())
-        docking.status = 'failed'
+        docking.scoring_status = 'failed'
     db.session.add(docking)
     db.session.commit()
