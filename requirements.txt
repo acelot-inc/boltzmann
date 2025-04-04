@@ -1,3 +1,4 @@
+boltz
 celery
 flask
 flask_sqlalchemy
