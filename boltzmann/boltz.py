@@ -1,3 +1,4 @@
+import json
 import os
 import string
 import subprocess
@@ -38,8 +39,8 @@ def model_path(folder, name, model_id):
 # See the Boltz repository for details on these (and more) options:
 # https://github.com/jwohlwend/boltz/blob/main/docs/prediction.md#options
 def run(folder, name, config, *,
-    recycling_steps   = 10,
-    diffusion_samples = 25,
+    recycling_steps   = None, #10,
+    diffusion_samples = None, #25,
     use_msa_server    = False,
     override          = False,
     cache             = None
