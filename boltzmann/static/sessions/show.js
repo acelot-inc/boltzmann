@@ -69,7 +69,7 @@ async function enqueue(request_data) {
 }
 
 async function pull_model(job_id, model_id) {
-  const modelurl = `${window.location.pathname}/jobs/${job_id}/models/${model_id}`
+  const modelurl = `/api/v1/${window.location.pathname}/jobs/${job_id}/models/${model_id}`
   const response = await fetch(modelurl)
   if(!response.ok) return;
 
