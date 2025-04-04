@@ -55,8 +55,9 @@ def dock(docking_id):
             boltz.SmilesSequence(docking.smiles)
         ])
 
-        folder = flask_app.config['BOLTZ_FOLDER']
-        boltz.run(folder, docking.name, config)
+        folder = flask_app.config['BOLTZ']['workdir']
+        cache  = flask_app.config['BOLTZ']['cachedir']
+        boltz.run(folder, docking.name, config, cache=cache)
         docking.docking_status = 'finished'
     except Exception as e:
         print(traceback.format_exc())
@@ -80,7 +81,7 @@ def score(docking_id):
     db.session.commit()
 
     try:
-        folder = flask_app.config['BOLTZ_FOLDER']
+        folder = flask_app.config['BOLTZ']['workdir']
         scores = boltz.score_all(folder, docking.name)
         docking.scores = json.dumps(scores)
         docking.scoring_status = 'finished'

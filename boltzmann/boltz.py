@@ -40,7 +40,8 @@ def run(folder, name, config, *,
     recycling_steps   = 10,
     diffusion_samples = 25,
     use_msa_server    = False,
-    override          = False
+    override          = False,
+    cache             = None
 ):
     inndir = os.path.join(folder, 'input')
     ootdir = os.path.join(folder, 'output')
@@ -63,6 +64,9 @@ def run(folder, name, config, *,
     if diffusion_samples is not None:
         command.append('--diffusion_samples')
         command.append(str(diffusion_samples))
+    if cache:
+        command.append('--cache')
+        command.append(str(cache))
 
     subprocess.run(command)
 
