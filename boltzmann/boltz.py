@@ -14,7 +14,7 @@ class ProteinSequence(Sequence):
     def __init__(self, sequence, msa_file=None):
         super(ProteinSequence, self).__init__('protein', {'sequence': sequence})
         if msa_file is not None:
-            self.info['protein']['msa'] = msa_file
+            self.info['msa'] = msa_file
 
 class SmilesSequence(Sequence):
     def __init__(self, smiles):
