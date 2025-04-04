@@ -15,7 +15,7 @@ from .config import celery_app, flask_app
 # def add_protein(name, sequence):
 #     folder = os.path.join(celery_app.root, 'sessions', '0')
 #     config = boltz.config_for([
-#         ProteinSequence(sequence, msa_file=protein.msa_file)
+#         boltz.ProteinSequence(sequence, msa_file=protein.msa_file)
 #     ])
 
 #     # Get an MSA file from Boltz's default MSA server...
@@ -51,8 +51,8 @@ def dock(docking_id):
 
     try:
         config = boltz.config_for([
-            ProteinSequence(protein.sequence, msa_file=protein.msa_file),
-            SmilesSequence(docking.smiles)
+            boltz.ProteinSequence(protein.sequence, msa_file=protein.msa_file),
+            boltz.SmilesSequence(docking.smiles)
         ])
 
         folder = flask_app.config['BOLTZ_FOLDER']
