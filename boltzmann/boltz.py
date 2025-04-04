@@ -54,7 +54,7 @@ def run(folder, name, config, *,
     with open(inyaml, 'w') as file:
         yaml.dump(config, file)
 
-    command = ['boltz', 'predict', inyaml]
+    command = ['boltz', 'predict', inyaml, '--out_dir', ootdir]
     if override:
         command.append('--override')
     if use_msa_server:
@@ -69,7 +69,7 @@ def run(folder, name, config, *,
         command.append('--cache')
         command.append(str(cache))
 
-    subprocess.run(command, check=True)
+    subprocess.run(command, stderr=subprocess.STDOUT, check=True)
 
 def score_boltz(confidence_file):
     with open(confidence_file) as file:

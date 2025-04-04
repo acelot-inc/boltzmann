@@ -20,7 +20,7 @@ def seed():
             name     = protein['name'],
             sequence = protein['sequence'],
             style    = json.dumps(protein['style']),
-            msa_file = os.path.join(protein['msa_file'], root)
+            msa_file = os.path.join(root, protein['msa_file'])
         ))
 
     db.session.commit()
