@@ -1,5 +1,4 @@
 import os
-import shutil
 import string
 import subprocess
 import yaml
@@ -49,8 +48,8 @@ def run(folder, name, config, *,
     ootdir = os.path.join(folder, 'output')
     config = os.path.join(inndir, name + '.yaml')
 
-    shutil.mkdirs(inndir, exist_ok=True)
-    shutil.mkdirs(ootdir, exist_ok=True)
+    os.makedirs(inndir, exist_ok=True)
+    os.makedirs(ootdir, exist_ok=True)
 
     with open(config, 'w') as file:
         yaml.dump(config, file)
