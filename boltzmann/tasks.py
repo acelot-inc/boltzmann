@@ -66,8 +66,9 @@ def dock(docking_id):
     db.session.commit()
 
     # Queue up the scoring task...
-    result = score.delay()
-    result.forget()
+    if docking.docking_status == 'finished':
+        result = score.delay(docking_id)
+        result.forget()
 
 
 @celery_app.task(queue='scoring')

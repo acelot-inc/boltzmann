@@ -3,18 +3,18 @@ import subprocess
 import yaml
 
 class Sequence:
-    def __init__(self, type, config):
-        self.type   = type
-        self.config = config
+    def __init__(self, type, info):
+        self.type = type
+        self.info = info
 
     def config(self, chain_id):
-        return {self.type: {**self.config, 'id': chain_id}}
+        return {self.type: {**self.info, 'id': chain_id}}
 
 class ProteinSequence(Sequence):
     def __init__(self, sequence, msa_file=None):
         super(ProteinSequence, self).__init__('protein', {'sequence': sequence})
         if msa_file is not None:
-            self.config['protein']['msa'] = msa_file
+            self.info['protein']['msa'] = msa_file
 
 class SmilesSequence(Sequence):
     def __init__(self, smiles):
