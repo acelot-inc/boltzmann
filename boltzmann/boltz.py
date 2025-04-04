@@ -46,15 +46,15 @@ def run(folder, name, config, *,
 ):
     inndir = os.path.join(folder, 'input')
     ootdir = os.path.join(folder, 'output')
-    config = os.path.join(inndir, name + '.yaml')
+    inyaml = os.path.join(inndir, name + '.yaml')
 
     os.makedirs(inndir, exist_ok=True)
     os.makedirs(ootdir, exist_ok=True)
 
-    with open(config, 'w') as file:
+    with open(inyaml, 'w') as file:
         yaml.dump(config, file)
 
-    command = ['boltz', 'run', config]
+    command = ['boltz', 'predict', inyaml]
     if override:
         command.append('--override')
     if use_msa_server:
@@ -69,7 +69,7 @@ def run(folder, name, config, *,
         command.append('--cache')
         command.append(str(cache))
 
-    subprocess.run(command)
+    subprocess.run(command, check=True)
 
 def score_boltz(confidence_file):
     with open(confidence_file) as file:
