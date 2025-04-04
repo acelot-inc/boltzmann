@@ -171,8 +171,8 @@ job_list.addEventListener('click', event => {
 
     // CURRENT_MODEL_ID = 0
     CURRENT_JOB_ID = target.dataset.job_id
-    // show_model(CURRENT_JOB_ID, CURRENT_MODEL_ID)
-    show_demo()
+    show_model(CURRENT_JOB_ID, CURRENT_MODEL_ID)
+    // show_demo()
   }
 })
 

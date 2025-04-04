@@ -2,6 +2,7 @@ import flask
 
 from ..tasks  import dock
 from ..models import db, Docking, Job, Protein, Session
+from ..boltz  import model_path
 
 # @blueprint.route('/queue')
 # def queue():
@@ -23,12 +24,12 @@ def jobs(session_id):
 @blueprint.route('/sessions/<int:session_id>/jobs', methods=['POST'])
 def enqueue(session_id):
     session = Session.query.get_or_404(session_id)
-    print(flask.request.data)
+    # print(flask.request.data)
 
     jobs  = []
     tasks = []
     info  = flask.request.get_json()
-    print(info)
+    # print(info)
 
     for data in info:
         protein = Protein.query.get_or_404(data['protein_id'])
@@ -64,9 +65,13 @@ def enqueue(session_id):
 
 @blueprint.route('/sessions/<int:session_id>/jobs/<int:job_id>/models/<int:model_id>')
 def model(session_id, job_id, model_id):
-    job = Job.query.filter_by(session_id=session_id).get_or_404(job_id)
-    if job.status not in ('scoring', 'finished', 'scoring-failed'):
+    job = Job.query.filter_by(session_id=session_id, id=job_id).first_or_404()
+    if job.docking.docking_status != 'finished':
         return 404
 
-    path = os.path.join(app.root, job.model_path(model_id))
+    # if model_id >= job.diffusion_samples:
+    #     return 404
+
+    root = flask.current_app.config['BOLTZ']['workdir']
+    path = model_path(root, job.docking.name, model_id)
     return flask.send_file(path, mimetype='chemical/x-mmcif')
