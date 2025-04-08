@@ -1,9 +1,36 @@
 const JOBS = new Map()
 const ROWS = new Map()
 const CIFS = new Map()
+const VIEW = new Map()
 
-let CURRENT_JOB_ID   = null
-let CURRENT_MODEL_ID = null
+let CURRENT_JOB_ID   = undefined
+let CURRENT_MODEL_ID = undefined
+
+function get_status(job) {
+  if(job.docking === 'pending') {
+    return 'docking pending'
+  }
+  else if(job.docking === 'running') {
+    return 'docking running'
+  }
+  else if(job.docking === 'failed') {
+    return 'docking failed'
+  }
+  else {
+    if(job.scoring === 'pending') {
+      return 'scoring pending'
+    }
+    else if(job.scoring === 'running') {
+      return 'scoring running'
+    }
+    else if(job.scoring === 'failed') {
+      return 'scoring failed'
+    }
+    else {
+      return 'scored'
+    }
+  }
+}
 
 function sync_jobs(jobs) {
   const job_list = document.getElementById('job-list')
@@ -29,7 +56,8 @@ function sync_jobs(jobs) {
     element.dataset.smiles = info.smiles
     element.querySelector('.name').innerText    = info.name || '???'
     element.querySelector('.protein').innerText = info.protein || '???'
-    element.querySelector('.score').innerText   = info.boltz_ptm || ''
+    // element.querySelector('.score').innerText   = info.boltz_ptm || ''
+    element.querySelector('.score').innerText   = get_status(info)
     JOBS.set(id, info)
 
     const canvas = element.querySelector('canvas')
@@ -68,6 +96,14 @@ async function enqueue(request_data) {
   sync_jobs(await response.json())
 }
 
+async function pull_demo(job_id, model_id) {
+  const response = await fetch('/static/test.cif')
+  if(!response.ok) return;
+
+  CIFS.set(`${job_id}:${model_id}`, await response.text())
+  show_model(job_id, model_id)
+}
+
 async function pull_model(job_id, model_id) {
   const modelurl = `/api/v1/${window.location.pathname}/jobs/${job_id}/models/${model_id}`
   const response = await fetch(modelurl)
@@ -90,11 +126,12 @@ function show_model(job_id, model_id) {
     viewer.setStyle({chain: "B"}, {stick: {}})
 
     // And show it!
-    viewer.zoomTo({chain: "B"})
+    load_view_or_zoom()
     viewer.render()
   }
   else {
-    pull_model(job_id, model_id)
+    // pull_model(job_id, model_id)
+    pull_demo(job_id, model_id)
   }
 }
 
@@ -120,6 +157,22 @@ function close_modal() {
   }
 
   screen.style.display = 'none'
+}
+
+function load_view_or_zoom() {
+  const view = VIEW.get(CURRENT_JOB_ID)
+  if(view === undefined) {
+    viewer.zoomTo({chain: "B"})
+  }
+  else {
+    viewer.setView(view)
+  }
+}
+
+function save_view(view) {
+  if(CURRENT_JOB_ID !== undefined) {
+    VIEW.set(CURRENT_JOB_ID, view)
+  }
 }
 
 document.getElementById('single-job-open').addEventListener('click', event => {
@@ -164,16 +217,22 @@ job_list.addEventListener('click', event => {
   if(target) {
     event.preventDefault()
 
-    const jobs = job_list.children
-    for(let i = 0; i < jobs.length; ++i) {
-      const job = jobs[i]
-      job.classList.toggle('active', job === target)
+    if(event.target.getAttribute('href') === '#re-enqueue') {
+      const smiles = target.dataset.smiles
+      editor.readGenericMolecularInput(smiles)
+      open_modal('single-job-modal')
     }
+    else {
+      const jobs = job_list.children
+      for(let i = 0; i < jobs.length; ++i) {
+        const job = jobs[i]
+        job.classList.toggle('active', job === target)
+      }
 
-    // CURRENT_MODEL_ID = 0
-    CURRENT_JOB_ID = target.dataset.job_id
-    show_model(CURRENT_JOB_ID, CURRENT_MODEL_ID)
-    // show_demo()
+      // CURRENT_MODEL_ID = 0
+      CURRENT_JOB_ID = target.dataset.job_id
+      show_model(CURRENT_JOB_ID, CURRENT_MODEL_ID)
+    }
   }
 })
 
@@ -193,13 +252,6 @@ models.addEventListener('click', event => {
   }
 })
 
-
-// Load SMILES into the JSME editor:
-// editor.readGenericMolecularInput(smiles)
-
-// Get SMILES out of the JSME editor:
-// let smiles = editor.smiles()
-
 function jsmeOnLoad() {
   editor = new JSApplet.JSME('editor', '600px', '440px', {
     'options': 'hydrogens,fullScreenIcon',
@@ -207,8 +259,8 @@ function jsmeOnLoad() {
 }
 
 const element = document.getElementById('viewer')
-const viewer  = $3Dmol.createViewer(element, {background: '#fff'});
-// viewer.addModel('url:/static/test.cif', 'cif')
+const viewer  = $3Dmol.createViewer(element, {background: '#fff'})
+viewer.setViewChangeCallback(save_view)
 
 // Add a new color scheme that preserves all defaults except carbon:
 const colors = {...$3Dmol.elementColors.rasmol, C: '#486860'}
@@ -220,25 +272,6 @@ function apply_style(chain, style) {
     viewer.setStyle(query, rule.style)
   }
 }
-
-async function show_demo() {
-  viewer.removeAllModels()
-  const response = await fetch('/static/test.cif')
-  viewer.addModel(await response.text(), 'cif')
-
-  // viewer.setStyle({chain:"A"},                 {cartoon:{color:"#9dc"}})
-  // viewer.setStyle({chain:"A", resi:"11-18"},   {cartoon:{color:"#9dc"}, stick:{colorscheme:colors, radius:0.1}})
-  // viewer.setStyle({chain:"A", resi:"84-94"},   {cartoon:{color:"#9dc"}, stick:{colorscheme:colors, radius:0.1}})
-  // viewer.setStyle({chain:"A", resi:"147-150"}, {cartoon:{color:"#9dc"}, stick:{colorscheme:colors, radius:0.1}})
-
-  apply_style('A', STYLE['NLK'])
-
-  viewer.setStyle({chain: 'B'}, {stick: {}})
-  viewer.zoomTo({chain: 'B'})
-  viewer.render()
-}
-
-
 
 async function poll_jobs() {
   const response = await fetch(API)

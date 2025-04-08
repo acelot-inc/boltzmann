@@ -60,6 +60,8 @@
 }
 
 #job-list .job {
+  position: relative;
+
   background-color: #fff;
   border: 2px solid #888;
   border-radius: 6pt;
@@ -82,6 +84,37 @@
 
 #job-list canvas {
   display: block;
+}
+
+.job .actions {
+  position: absolute;
+  top: 2pt;
+  right: 2pt;
+
+  display: none;
+}
+
+.job:hover .actions {
+  display: block;
+}
+
+.job .actions a {
+  display: inline-block;
+  line-height: 14pt;
+  height: 14pt;
+  width: 14pt;
+
+  border-radius: 7pt;
+  background-color: #44f;
+  color: #fff;
+
+  text-align: center;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.job .actions a:hover {
+  background-color: #66f;
 }
 
 
