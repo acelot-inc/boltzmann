@@ -16,6 +16,7 @@ class ChainSelector(Select):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-n', '--name', default='structure')
+    parser.add_argument('-o', '--outfile')
     parser.add_argument('chains')
     parser.add_argument('pdb_file')
     args = parser.parse_args()
@@ -23,9 +24,14 @@ def main():
     parser    = PDBParser(QUIET=True)
     structure = parser.get_structure(args.name, args.pdb_file)
 
+    if args.outfile:
+        outfile = open(args.outfile, 'w')
+    else:
+        outfile = sys.stdout
+
     io = PDBIO()
     io.set_structure(structure)
-    io.save(sys.stdout, ChainSelector(args.chains))
+    io.save(outfile, ChainSelector(args.chains))
 
 
 if __name__ == '__main__':
