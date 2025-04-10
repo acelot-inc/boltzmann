@@ -1,8 +1,10 @@
+biopython
 boltz
 celery
 flask
 flask_sqlalchemy
 flask_wtf
+meeko
 psycopg2-binary
 pyyaml
 redis
