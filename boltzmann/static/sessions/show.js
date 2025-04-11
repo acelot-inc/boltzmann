@@ -27,7 +27,12 @@ function get_status(job) {
       return 'scoring failed'
     }
     else {
-      return 'scored'
+      let lowest = job.scores[0].vina_score
+      for(let i = 1; i < job.scores.length; ++i) {
+        lowest = Math.min(lowest, job.scores[i].vina_score)
+      }
+
+      return lowest.toFixed(1)
     }
   }
 }
