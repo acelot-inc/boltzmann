@@ -114,10 +114,10 @@ async function pull_model(job_id, model_id) {
 }
 
 function show_model(job_id, model_id) {
-  const cif = CIFS.get(`${job_id}:${model_id}`)
-  if(cif) {
+  const model = CIFS.get(`${job_id}:${model_id}`)
+  if(model) {
     viewer.removeAllModels()
-    viewer.addModel(cif, 'cif')
+    viewer.addModel(model, 'pdb')
 
     // Style the protein...
     apply_style("A", STYLE[JOBS.get(job_id).protein])

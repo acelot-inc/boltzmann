@@ -73,7 +73,6 @@ def model(session_id, job_id, model_id):
     #     return 404
 
     root = flask.current_app.config['BOLTZ']['workdir']
-    print('ROOT:', root)
     path = model_path(root, job.docking.name, model_id)
-    print('CIF: ', path)
-    return flask.send_file(path, mimetype='chemical/x-mmcif')
+    # return flask.send_file(path, mimetype='chemical/x-mmcif')
+    return flask.send_file(path, mimetype='chemical/pdb')
