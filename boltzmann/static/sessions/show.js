@@ -62,7 +62,7 @@ function sync_jobs(jobs) {
     element.querySelector('.name').innerText    = info.name || '???'
     element.querySelector('.protein').innerText = info.protein || '???'
     element.querySelector('.score').innerText   = get_status(info)
-    element.classList.toggle('clickable', job.docking === 'finished')
+    element.classList.toggle('clickable', info.docking === 'finished')
 
     JOBS.set(id, info)
 
