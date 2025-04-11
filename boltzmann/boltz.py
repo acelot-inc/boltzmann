@@ -118,7 +118,7 @@ def score_vina(pdb_file):
         '--ligand',   ligand  + '.pdbqt',
         '--score_only',
         '--autobox'
-    ], stdout=subprocess.PIPE, check=True)
+    ], stdout=subprocess.PIPE, text=True, check=True)
 
     print(result.stdout)
     lines = result.stdout.splitlines()
@@ -136,11 +136,11 @@ def score_vina(pdb_file):
     # 39) *(4) Unbound System's Energy        : -0.019 (kcal/mol)\n"""
 
     return {
-        'vina_score':                 float(lines[30].split(":")[-1].split()[0]),
-        'vina_intermolecular_energy': float(lines[31].split(":")[-1].split()[0]),
-        'vina_internal_energy':       float(lines[34].split(":")[-1].split()[0]),
-        'vina_torsional_free_energy': float(lines[38].split(":")[-1].split()[0]),
-        'vina_unbound_system_energy': float(lines[39].split(":")[-1].split()[0])
+        'vina_score':                 float(lines[30].split(b":")[-1].split()[0]),
+        'vina_intermolecular_energy': float(lines[31].split(b":")[-1].split()[0]),
+        'vina_internal_energy':       float(lines[34].split(b":")[-1].split()[0]),
+        'vina_torsional_free_energy': float(lines[38].split(b":")[-1].split()[0]),
+        'vina_unbound_system_energy': float(lines[39].split(b":")[-1].split()[0])
     }
 
 
