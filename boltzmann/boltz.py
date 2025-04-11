@@ -104,12 +104,13 @@ def score_vina(pdb_file):
     split_model(pdb_file, ligand  + '.raw.pdb', chains='B')
 
     # Use OpenBabel to add hydrogens and charges...
-    subprocess.run(['obabel', protein + '.raw.pdb', '-O', protein + '.pdb',  '-p', '7.4'], check=True)
+    # NOTE: Meeko seems to not expect hydrogens added to the protein, so we can just use the raw.
+    # subprocess.run(['obabel', protein + '.raw.pdb', '-O', protein + '.pdb',  '-p', '7.4'], check=True)
     subprocess.run(['obabel', ligand  + '.raw.pdb', '-O', ligand  + '.mol2', '-p', '7.4'], check=True)
 
     # Use Meeko to convert to PDBQT files...
-    subprocess.run(['/app/envs/meeko/bin/mk_prepare_receptor.py', '-i', protein + '.pdb',  '-o', protein, '--write_pdbqt'], check=True)
-    subprocess.run(['/app/envs/meeko/bin/mk_prepare_ligand.py',   '-i', ligand  + '.mol2', '-o', ligand + '.pdbqt'],        check=True)
+    subprocess.run(['/app/envs/meeko/bin/mk_prepare_receptor.py', '-i', protein + '.raw.pdb', '-o', protein, '--write_pdbqt'], check=True)
+    subprocess.run(['/app/envs/meeko/bin/mk_prepare_ligand.py',   '-i', ligand  + '.mol2',    '-o', ligand + '.pdbqt'],        check=True)
 
     # Use AutoDock Vina to score in place...
     result = subprocess.run(['vina',
