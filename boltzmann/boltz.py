@@ -108,8 +108,8 @@ def score_vina(pdb_file):
     subprocess.run(['obabel', ligand  + '.raw.pdb', '-O', ligand  + '.mol2', '-p', '7.4'], check=True)
 
     # Use Meeko to convert to PDBQT files...
-    subprocess.run(['mk_prepare_receptor.py', '-i', protein + '.pdb',  '-o', protein, '--write_pdbqt'], check=True)
-    subprocess.run(['mk_prepare_ligand.py',   '-i', ligand  + '.mol2', '-o', ligand + '.pdbqt'],        check=True)
+    subprocess.run(['/app/envs/meeko/bin/mk_prepare_receptor.py', '-i', protein + '.pdb',  '-o', protein, '--write_pdbqt'], check=True)
+    subprocess.run(['/app/envs/meeko/bin/mk_prepare_ligand.py',   '-i', ligand  + '.mol2', '-o', ligand + '.pdbqt'],        check=True)
 
     # Use AutoDock Vina to score in place...
     result = subprocess.run(['vina',
