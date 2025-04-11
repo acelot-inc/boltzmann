@@ -96,6 +96,3 @@ def get_config(name):
         }
     with open(name) as file:
         return json.load(file)
-
-def seed_db(db):
-    pass
