@@ -1,4 +1,5 @@
 import celery
+import datetime
 import json
 import traceback
 
@@ -39,11 +40,18 @@ from .config import celery_app, flask_app
 #     db.session.add(protein)
 #     db.session.commit()
 
+def log(message):
+    now    = datetime.datetime.now()
+    header = now.strftime('%Y-%m-%d %H:%M:%S.%f')
+    print('[%s] %s' % (header, message))
+
 
 @celery_app.task(queue='docking')
 def dock(docking_id):
     docking = Docking.query.get(docking_id)
     protein = docking.protein
+
+    log('Started docking job %d...' % docking.id)
 
     docking.docking_status = 'running'
     db.session.add(docking)
@@ -59,10 +67,12 @@ def dock(docking_id):
         cache  = flask_app.config['BOLTZ']['cachedir']
         boltz.run(folder, docking.name, config, cache=cache)
         docking.docking_status = 'finished'
+        log('Job %d finished.' % docking.id)
     except Exception as e:
         print(traceback.format_exc())
         docking.docking_status = 'failed'
         docking.scoring_status = 'canceled'
+        log('Job %d failed.' % docking.id)
     db.session.add(docking)
     db.session.commit()
 
@@ -76,6 +86,8 @@ def dock(docking_id):
 def score(docking_id):
     docking = Docking.query.get(docking_id)
 
+    log('Started scoring job %d...' % docking.id)
+
     docking.scoring_status = 'running'
     db.session.add(docking)
     db.session.commit()
@@ -85,8 +97,10 @@ def score(docking_id):
         scores = boltz.score_all(folder, docking.name)
         docking.scores = json.dumps(scores)
         docking.scoring_status = 'finished'
+        log('Job %d finished.' % docking.id)
     except Exception as e:
         print(traceback.format_exc())
         docking.scoring_status = 'failed'
+        log('Job %d failed.' % docking.id)
     db.session.add(docking)
     db.session.commit()
