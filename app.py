@@ -1,5 +1,4 @@
 import os
-
 import boltzmann.config
 
 confname = os.environ.get('BOLTZMANN_CONFIG')

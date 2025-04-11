@@ -8,4 +8,5 @@ meeko
 psycopg2-binary
 pyyaml
 redis
+uvicorn
 valkey

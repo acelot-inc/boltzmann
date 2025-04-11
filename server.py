@@ -4,7 +4,6 @@ import boltzmann.config
 parser = argparse.ArgumentParser()
 parser.add_argument('-b', '--bind', type=str, default='127.0.0.1')
 parser.add_argument('-p', '--port', type=int, default=1381)
-parser.add_argument('-w', '--wsgi', action='store_true')
 parser.add_argument('--create-db',  action='store_true')
 parser.add_argument('config', nargs='?', default='DEV')
 args = parser.parse_args()
@@ -24,5 +23,5 @@ if args.create_db:
     print('Database initialized.')
     exit(0)
 
-if not args.wsgi:
-    flask_app.run(host=args.bind, port=args.port)
+
+flask_app.run(host=args.bind, port=args.port)
