@@ -11,6 +11,8 @@ logging.basicConfig(
     level   = logging.INFO
 )
 
+logger = logging.getLogger()
+
 from Bio.PDB import PDBParser, PDBIO, Select
 
 class Sequence:
@@ -99,18 +101,27 @@ def score_vina(pdb_file):
     ligand    = base + '.lig'
     protein   = base + '.pro'
 
+    name = os.path.basename(base)
+    logger.info('Splitting ' + name + '...')
+
     # Use BioPython to separate proteins and ligands...
     split_model(pdb_file, protein + '.raw.pdb', chains='A')
     split_model(pdb_file, ligand  + '.raw.pdb', chains='B')
+
+    logger.info('Preprocessing ' + name + '...')
 
     # Use OpenBabel to add hydrogens and charges...
     # NOTE: Meeko seems to not expect hydrogens added to the protein, so we can just use the raw.
     # subprocess.run(['obabel', protein + '.raw.pdb', '-O', protein + '.pdb',  '-p', '7.4'], check=True)
     subprocess.run(['obabel', ligand  + '.raw.pdb', '-O', ligand  + '.mol2', '-p', '7.4'], check=True)
 
+    logger.info('Processing ' + name + '...')
+
     # Use Meeko to convert to PDBQT files...
     subprocess.run(['/app/envs/meeko/bin/mk_prepare_receptor.py', '-i', protein + '.raw.pdb', '-o', protein, '--write_pdbqt'], check=True)
     subprocess.run(['/app/envs/meeko/bin/mk_prepare_ligand.py',   '-i', ligand  + '.mol2',    '-o', ligand + '.pdbqt'],        check=True)
+
+    logger.info('Scoring ' + name + '...')
 
     # Use AutoDock Vina to score in place...
     result = subprocess.run(['vina',
@@ -120,9 +131,12 @@ def score_vina(pdb_file):
         '--autobox'
     ], stdout=subprocess.PIPE, check=True)
 
-    print(result.stdout)
-    lines = result.stdout.splitlines()
+    with open(base + '.vina.out', 'wb') as file:
+        file.write(result.stdout)
 
+    logger.info('Done with ' + name + '!')
+
+    lines = result.stdout.splitlines()
     # Note: Using Andrew's line numbers:
     # 30) *Estimated Free Energy of Binding   : 0.000 (kcal/mol) [=(1)+(2)+(3)-(4)]\n
     # 31) *(1) Final Intermolecular Energy    : 0.000 (kcal/mol)\n
