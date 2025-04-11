@@ -171,6 +171,7 @@ function load_view_or_zoom() {
   }
   else {
     viewer.setView(view)
+    viewer.center({chain: "B"})
   }
 }
 
@@ -234,7 +235,7 @@ job_list.addEventListener('click', event => {
         job.classList.toggle('active', job === target)
       }
 
-      // CURRENT_MODEL_ID = 0
+      CURRENT_MODEL_ID = 0
       CURRENT_JOB_ID = target.dataset.job_id
       show_model(CURRENT_JOB_ID, CURRENT_MODEL_ID)
     }

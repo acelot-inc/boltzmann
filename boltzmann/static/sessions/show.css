@@ -68,18 +68,16 @@
   margin-bottom: 4pt;
 }
 
-#job-list .job .info {
-  padding: 8pt 0;
-  text-align: center;
-}
-
 #job-list .job.active {
-  background-color: #9cd;
+  background-color: #bef;
 }
 
 #job-list .info {
   width: 4em;
   float: left;
+
+  padding: 8pt 0;
+  text-align: center;
 }
 
 #job-list canvas {
@@ -119,6 +117,7 @@
 
 
 #models {
+  display: none;
   position: absolute;
   background-color: #ddd;
 
@@ -161,7 +160,8 @@
   top: 0;
   left: 2in;
   right: 0;
-  bottom: 36pt;
+/*  bottom: 36pt;*/
+  bottom: : 0;
 }
 
 #editor {
