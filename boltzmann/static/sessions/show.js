@@ -130,8 +130,8 @@ function show_model(job_id, model_id) {
     viewer.render()
   }
   else {
-    // pull_model(job_id, model_id)
-    pull_demo(job_id, model_id)
+    pull_model(job_id, model_id)
+    // pull_demo(job_id, model_id)
   }
 }
 

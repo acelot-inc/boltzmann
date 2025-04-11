@@ -150,7 +150,7 @@ def score_all(folder, name, diffusion_samples=1): #25):
         conf_file = os.path.join(models, 'confidence_%s_model_%d.json' % (name, i))
         scores[i].update(score_boltz(conf_file))
 
-        pdb_file = os.path.join(model_folder, '%s_model_%d.pdb' % (name, i))
+        pdb_file = os.path.join(models, '%s_model_%d.pdb' % (name, i))
         scores[i].update(score_vina(pdb_file))
 
     return scores
