@@ -1,3 +1,4 @@
+asgiref
 biopython
 boltz
 celery
