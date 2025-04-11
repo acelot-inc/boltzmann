@@ -118,7 +118,7 @@ def score_vina(pdb_file):
         '--ligand',   ligand  + '.pdbqt',
         '--score_only',
         '--autobox'
-    ], stdout=subprocess.PIPE, text=True, check=True)
+    ], stdout=subprocess.PIPE, check=True)
 
     print(result.stdout)
     lines = result.stdout.splitlines()
