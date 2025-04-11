@@ -61,8 +61,9 @@ function sync_jobs(jobs) {
     element.dataset.smiles = info.smiles
     element.querySelector('.name').innerText    = info.name || '???'
     element.querySelector('.protein').innerText = info.protein || '???'
-    // element.querySelector('.score').innerText   = info.boltz_ptm || ''
     element.querySelector('.score').innerText   = get_status(info)
+    element.classList.toggle('clickable', job.docking === 'finished')
+
     JOBS.set(id, info)
 
     const canvas = element.querySelector('canvas')
@@ -228,7 +229,7 @@ job_list.addEventListener('click', event => {
       editor.readGenericMolecularInput(smiles)
       open_modal('single-job-modal')
     }
-    else {
+    else if(target.classList.contains('clickable')) {
       const jobs = job_list.children
       for(let i = 0; i < jobs.length; ++i) {
         const job = jobs[i]

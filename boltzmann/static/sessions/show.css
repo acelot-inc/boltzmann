@@ -61,11 +61,16 @@
 
 #job-list .job {
   position: relative;
+  direction: initial;
 
-  background-color: #fff;
+  background-color: #ddd;
   border: 2px solid #888;
   border-radius: 6pt;
   margin-bottom: 4pt;
+}
+
+#job-list .job.clickable {
+  background-color: #fff;
 }
 
 #job-list .job.active {
