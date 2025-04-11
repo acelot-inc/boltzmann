@@ -171,7 +171,7 @@ function load_view_or_zoom() {
   }
   else {
     viewer.setView(view)
-    // viewer.center({chain: "B"})
+    viewer.center({chain: "B"})
   }
 }
 
