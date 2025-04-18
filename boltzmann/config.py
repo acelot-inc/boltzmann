@@ -30,6 +30,7 @@ def configure(config):
     flask_app.config['DEVELOPMENT']                    = config['development']
     flask_app.config['TESTING']                        = config['testing']
     flask_app.config['WTF_CSRF_ENABLED']               = config['csrf']
+    flask_app.config['SESSION_COOKIE_NAME']            = 'boltzmann'
     flask_app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     flask_app.config['BOLTZ']  = config['boltz']
