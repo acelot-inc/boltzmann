@@ -54,6 +54,8 @@ def run(folder, name, config, *,
 
     os.makedirs(inndir, exist_ok=True)
     os.makedirs(ootdir, exist_ok=True)
+    if cache:
+        os.makedirs(cache, exist_ok=True)
 
     with open(inyaml, 'w') as file:
         yaml.dump(config, file)
