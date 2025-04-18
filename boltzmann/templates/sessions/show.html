@@ -17,12 +17,20 @@
 </script>
 {% endblock %}
 
+{% block gadgets %}
+<div id="queue-info">
+  <span>Docking: <span id="docking-queue-depth">?</span></span>
+  <span>Scoring: <span id="scoring-queue-depth">?</span></span>
+</div>
+{% endblock %}
+
 {% block content %}
 <div id="jobs">
   <div id="job-list"></div>
   <div id="jobs-header">
     <div>
-      <a id="single-job-open" title="Enqueue" href="#">+</a>
+      <a id="download-smi-file" title="Download All" class="action" download="designs.smi" href="#">v</a>
+      <a id="single-job-open"   title="Enqueue" class="action main" href="#">+</a>
     </div>
     Ligands
   </div>
@@ -35,7 +43,8 @@
       </div>
       <canvas class="smiles" width="100" height="100"></canvas>
       <div class="actions">
-        <a title="Re-Enqueue" href="#re-enqueue">+</a>
+        <a title="Copy SMILES" href="#copy-smiles" class="action">:)</a>
+        <a title="Modify and Re-Enqueue" href="#re-enqueue" class="action main">+</a>
       </div>
     </div>
   </template>

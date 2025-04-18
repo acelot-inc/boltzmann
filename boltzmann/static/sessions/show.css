@@ -1,3 +1,12 @@
+#queue-info {
+  float: right;
+}
+
+#queue-info > span {
+  display: inline-block;
+  margin-left: 1rem;
+}
+
 #jobs {
   position: absolute;
   background-color: #ccc;
@@ -27,21 +36,16 @@
 
 #jobs-header a {
   display: inline-block;
-  height: 30pt;
-  width: 30pt;
 
-  background-color: #44f;
   border-radius: 15pt;
-  color: #fff;
+  height: 22pt;
+  line-height: 22pt;
+  width: 22pt;
+
   font-weight: bold;
-  line-height: 30pt;
   text-decoration: none;
   text-align: center;
   vertical-align: middle;
-}
-
-#jobs-header a:hover {
-  background-color: #66f;
 }
 
 #job-list {
@@ -103,20 +107,32 @@
 
 .job .actions a {
   display: inline-block;
-  line-height: 14pt;
-  height: 14pt;
-  width: 14pt;
 
   border-radius: 7pt;
-  background-color: #44f;
-  color: #fff;
+  height: 14pt;
+  line-height: 14pt;
+  width: 14pt;
 
   text-align: center;
   text-decoration: none;
   font-weight: bold;
 }
 
-.job .actions a:hover {
+
+a.action {
+  background-color: #777;
+  color: #fff;
+}
+
+a.main.action {
+  background-color: #44f;
+}
+
+a.action:hover {
+  background-color: #888;
+}
+
+a.main.action:hover {
   background-color: #66f;
 }
 

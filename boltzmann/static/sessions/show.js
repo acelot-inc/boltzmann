@@ -6,9 +6,35 @@ const VIEW = new Map()
 let CURRENT_JOB_ID   = undefined
 let CURRENT_MODEL_ID = undefined
 
+function ordinal(number) {
+  const tens = number % 100
+  const ones = number % 10
+
+  if(tens > 10 && tens < 20) {
+    return number + 'th'
+  }
+  else if(ones === 1) {
+    return number + 'st'
+  }
+  else if(ones === 2) {
+    return number + 'nd'
+  }
+  else if(ones === 3) {
+    return number + 'rd'
+  }
+  else {
+    return number + 'th'
+  }
+}
+
 function get_status(job) {
   if(job.docking === 'pending') {
-    return 'docking pending'
+    if(job.place) {
+      return 'docking ' + ordinal(job.place)
+    }
+    else {
+      return 'docking pending'
+    }
   }
   else if(job.docking === 'running') {
     return 'docking running'
@@ -18,7 +44,12 @@ function get_status(job) {
   }
   else {
     if(job.scoring === 'pending') {
+      if(job.place) {
+      return 'scoring' + ordinal(job.place)
+    }
+    else {
       return 'scoring pending'
+    }
     }
     else if(job.scoring === 'running') {
       return 'scoring running'
@@ -32,17 +63,25 @@ function get_status(job) {
         lowest = Math.min(lowest, job.scores[i].vina_score)
       }
 
-      return lowest.toFixed(1)
+      return 'finished ' + lowest.toFixed(1)
     }
   }
 }
 
-function sync_jobs(jobs) {
+function sync_jobs(data) {
+  if(data.queues) {
+    document.getElementById('docking-queue-depth').innerText = data.queues.docking
+    document.getElementById('scoring-queue-depth').innerText = data.queues.scoring
+  }
+
   const job_list = document.getElementById('job-list')
 
-  for (const [id, info] of Object.entries(jobs)) {
+  for (const [id, info] of Object.entries(data.jobs)) {
     const oldinfo = JOBS.get(id)
-    if(oldinfo && oldinfo.docking == info.docking && oldinfo.scoring == info.scoring) {
+    if(oldinfo && info.place && info.place !== oldinfo.place) {
+      // Needs an update...
+    }
+    else if(oldinfo && oldinfo.docking == info.docking && oldinfo.scoring == info.scoring) {
       // Already up to date...
       continue
     }
@@ -198,14 +237,38 @@ document.getElementById('single-job-form').addEventListener('submit', event => {
   // console.log(event)
 
   const protein_select = event.target.querySelector('select[name=protein_id]')
+  const custom_name    = event.target.querySelector('input[name=name]')
+
+  let protein_id = protein_select.value
+  let name       = 'Mol' + (JOBS.size + 1)
+
+  if(custom_name.value) {
+    // Unset to prevent accidental duplicates:
+    name = custom_name.value
+    custom_name.value = ''
+  }
+
   enqueue([{
-    protein_id: protein_select.value,
-    name:       'Mol' + JOBS.size,
+    protein_id: protein_id,
+    name:       name,
     smiles:     editor.smiles()
   }])
 
   close_modal()
 })
+
+document.getElementById('download-smi-file').addEventListener('click', event => {
+  // event.preventDefault()
+
+  let smi = ''
+  JOBS.forEach(job => {
+    smi += `${job.smiles} ${job.name}\n`
+  })
+
+  const blob = new Blob([smi], {type: 'chemical/x-daylight-smiles'})
+  event.target.href = URL.createObjectURL(blob)
+})
+
 
 function nearest(element, selector) {
   while(element) {
@@ -228,6 +291,10 @@ job_list.addEventListener('click', event => {
       const smiles = target.dataset.smiles
       editor.readGenericMolecularInput(smiles)
       open_modal('single-job-modal')
+    }
+    else if(event.target.getAttribute('href') === '#copy-smiles') {
+      const smiles = target.dataset.smiles
+      navigator.clipboard.writeText(smiles)
     }
     else if(target.classList.contains('clickable')) {
       const jobs = job_list.children

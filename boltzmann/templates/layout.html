@@ -8,6 +8,7 @@
   </head>
   <body>
     <header>
+      {% block gadgets %}{% endblock %}
       <h1><a href="{{ url_for('sessions.index') }}">Boltzmann</a></h1>
     </header>
     <content>{% block content %}{% endblock %}</content>
