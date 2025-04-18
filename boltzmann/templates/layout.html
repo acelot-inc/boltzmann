@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <link rel="stylesheet" href="/static/layout.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='layout.css') }}" />
     <title>{% block title %}Boltzmann{% endblock %}</title>
     {% block header %}{% endblock %}
   </head>
