@@ -1,0 +1,100 @@
+- name: configure db server
+  hosts:  all
+  become: true
+  handlers:
+  - name: reload postgresql
+    service:
+      name:  postgresql
+      state: reloaded
+
+  tasks:
+  - name: install apt packages
+    package:
+      name:
+      - postgresql-14
+
+  - name: install python packages
+    pip:
+      name:
+      - psycopg2-binary
+
+  - name: enable postgresql service
+    service:
+      name:    postgresql
+      state:   started
+      enabled: true
+
+  - name: listen on all ip addresses
+    become_user: postgres
+    community.postgresql.postgresql_set:
+      name:  listen_addresses
+      value: "*"
+    register: listen
+
+  - name: restart postgresql service
+    service:
+      name:    postgresql
+      state:   restarted
+      enabled: true
+    when: listen.changed
+
+  - name: create database
+    become_user: postgres
+    community.postgresql.postgresql_db:
+      name: "{{ vars.sql_database }}"
+
+  - name: create database user
+    become_user: postgres
+    community.postgresql.postgresql_user:
+      db:       "{{ vars.sql_database }}"
+      name:     "{{ vars.sql_username }}"
+      password: "{{ vars.sql_password }}"
+
+  - name: set database owner
+    become_user: postgres
+    community.postgresql.postgresql_owner:
+      db:        "{{ vars.sql_database }}"
+      new_owner: "{{ vars.sql_username }}"
+      obj_type:  database
+      obj_name:  "{{ vars.sql_database }}"
+
+  - name: set schema owner
+    become_user: postgres
+    community.postgresql.postgresql_owner:
+      db:        "{{ vars.sql_database }}"
+      new_owner: "{{ vars.sql_username }}"
+      obj_type:  schema
+      obj_name:  public
+
+  # TODO: Template the entire pg_hba file?
+  # TODO: See the `overwrite` option!
+  - name: allow network login
+    community.postgresql.postgresql_pg_hba:
+      dest:    /etc/postgresql/14/main/pg_hba.conf
+      users:   "{{ vars.sql_username }}"
+      contype: host
+      address: samenet
+      method:  scram-sha-256
+    notify: reload postgresql
+
+  - name: grant permissions (tables)
+    become_user: postgres
+    community.postgresql.postgresql_privs:
+      database: "{{ vars.sql_database }}"
+      roles:    "{{ vars.sql_username }}"
+      privs:    ALL
+      type:     table
+      objs:     ALL_IN_SCHEMA
+      # schema:   public
+      grant_option: false
+
+  - name: grant permissions (sequences)
+    become_user: postgres
+    community.postgresql.postgresql_privs:
+      database: "{{ vars.sql_database }}"
+      roles:    "{{ vars.sql_username }}"
+      privs:    ALL
+      type:     sequence
+      objs:     ALL_IN_SCHEMA
+      # schema:   public
+      grant_option: false

@@ -1,0 +1,22 @@
+[Unit]
+Description=Celery Worker
+After=network.target
+
+[Service]
+Type=simple
+User=app
+Group=app
+Environment="PYTHON_VIRTUALENV=/app/envs/boltzmann"
+Environment="BOLTZMANN_CONFIG=/app/code/config.json"
+WorkingDirectory=/app/code
+
+ExecStart=/app/envs/runin /app/envs/boltzmann celery --app app:celery_app worker \
+    --logfile /app/data/celery-{{ name }}.log \
+    --pidfile /app/data/celery-{{ name }}.pid \
+    --concurrency {{ concurrency }} \
+    --queues {{ queues }}
+#    --detach
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

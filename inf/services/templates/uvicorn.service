@@ -1,0 +1,20 @@
+[Unit]
+Description=Uvicorn
+After=network.target
+
+[Service]
+Type=simple
+User=app
+Group=app
+Environment="PYTHON_VIRTUALENV=/app/envs/boltzmann"
+Environment="BOLTZMANN_CONFIG=/app/code/config.json"
+WorkingDirectory=/app/code
+
+ExecStart=/app/envs/runin /app/envs/boltzmann uvicorn app:flask_asgi \
+    --root-path /boltzmann \
+    --host      127.0.0.1 \
+    --port      9998
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

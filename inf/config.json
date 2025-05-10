@@ -1,0 +1,8 @@
+{
+  "app_secret": "PUT-A-REAL-SECRET-HERE-IF-YOU-DEPLOY-THIS-TO-THE-PUBLIC-INTERNET",
+
+  "sql_hostname": "127.0.0.1",
+  "sql_database": "boltzmann",
+  "sql_username": "boltzmann",
+  "sql_password": "alohomora"
+}

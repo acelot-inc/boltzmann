@@ -1,0 +1,175 @@
+---
+- name: deploy boltzmann code
+  hosts:  all
+  become: true
+  handlers:
+  - name: restart cpu worker
+    systemd:
+      service: celery-cpu
+      state:   restarted
+
+  - name: restart gpu worker
+    systemd:
+      service: celery-gpu
+      state:   restarted
+
+  - name: restart uvicorn
+    systemd:
+      service: uvicorn
+      state:   restarted
+
+  tasks:
+  - name: install apt packages
+    package:
+      name:
+      - autodock-vina
+      - git
+
+  - name: allow read-through to the boltz cache
+    file:
+      path:  /home/ubuntu
+      state: directory
+      owner: ubuntu
+      group: ubuntu
+      mode:  0751
+
+  - name: create app user
+    user:
+      name: app
+
+  - name: create app directory
+    file:
+      path:  /app
+      state: directory
+
+  - name: create data directory
+    file:
+      path:  /app/data
+      state: directory
+      owner: app
+      group: app
+      mode:  0755
+
+  - name: create envs directory
+    file:
+      path:  /app/envs
+      state: directory
+      owner: app
+      group: app
+      mode:  0755
+
+  - name: create launch script
+    template:
+      src:  templates/runin.sh
+      dest: /app/envs/runin
+      mode: 0755
+
+  - name: create boltzmann environment
+    command:
+      cmd:     /usr/bin/python3.11 -m venv /app/envs/boltzmann
+      creates: /app/envs/boltzmann
+    become: yes
+    become_user: app
+
+  - name: create meeko environment
+    command:
+      cmd:     /usr/bin/python3.11 -m venv /app/envs/meeko
+      creates: /app/envs/meeko
+    become: yes
+    become_user: app
+
+  - name: fetch server code
+    git:
+      repo: https://github.com/acelot-inc/boltzmann.git
+      dest: /app/code
+      version: master
+      single_branch:     true
+      accept_newhostkey: true
+    notify:
+    - restart uvicorn
+    - restart cpu worker
+    - restart gpu worker
+    # when: not vars.get('development')
+
+  - name: copy protein metadata
+    copy:
+      src:  ../../data/proteins
+      dest: /app/data
+
+  - name: install boltzmann packages
+    pip:
+      requirements: /app/code/requirements.txt
+      virtualenv:   /app/envs/boltzmann
+    become: yes
+    become_user: app
+    notify: restart uvicorn
+
+  - name: install meeko packages
+    pip:
+      virtualenv: /app/envs/meeko
+      name:
+      - meeko
+      - prody
+    become: yes
+    become_user: app
+
+  - name: configure app
+    template:
+      src:   templates/boltzmann.config.json
+      dest:  /app/code/config.json
+      owner: root
+      group: app
+      mode:  0640
+    notify: restart uvicorn
+
+  - name: create database
+    command:
+      cmd:   /app/envs/boltzmann/bin/python3 server.py --create-db /app/code/config.json
+      chdir: /app/code
+    become: yes
+    become_user: app
+
+  - name: configure cpu worker
+    template:
+      src:  templates/celery-worker.service
+      dest: /etc/systemd/system/celery-cpu.service
+    vars:
+      name: cpu
+      queues: scoring
+      concurrency: 1
+    notify: restart cpu worker
+
+  - name: configure gpu worker
+    template:
+      src:  templates/celery-worker.service
+      dest: /etc/systemd/system/celery-gpu.service
+    vars:
+      name: gpu
+      queues: docking
+      concurrency: 1
+    notify: restart gpu worker
+
+  - name: configure uvicorn
+    template:
+      src:  templates/uvicorn.service
+      dest: /etc/systemd/system/uvicorn.service
+    notify: restart uvicorn
+
+  - name: start cpu worker
+    systemd:
+      service: celery-cpu
+      state:   started
+      enabled: true
+      daemon_reload: true
+
+  - name: start gpu worker
+    systemd:
+      service: celery-gpu
+      state:   started
+      enabled: true
+
+  - name: start uvicorn
+    systemd:
+      service: uvicorn
+      state:   started
+      enabled: true

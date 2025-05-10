@@ -1,0 +1,30 @@
+---
+- name: configure all servers
+  hosts:  all
+  become: true
+  tasks:
+  - name: install packages
+    apt:
+      update_cache: true
+      name:
+      - acl
+      - curl
+      - net-tools
+      - openbabel
+      - python3
+      - python3-pip
+
+- name: configure python
+  import_playbook: services/python.yml
+
+- name: configure postgres
+  import_playbook: services/postgres.yml
+
+- name: configure valkey
+  import_playbook: services/valkey.yml
+
+- name: configure app
+  import_playbook: services/boltzmann.yml
+
+- name: configure nginx
+  import_playbook: services/nginx.yml

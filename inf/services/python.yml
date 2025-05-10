@@ -1,0 +1,23 @@
+---
+- name: install python
+  hosts:  all
+  become: true
+  tasks:
+  - name: install base package
+    apt:
+      update_cache: true
+      name:
+      - software-properties-common
+
+  - name: add deadsnakes ppa repo
+    apt_repository:
+      repo: ppa:deadsnakes/nightly
+
+  - name: install custom pythons
+    apt:
+      name:
+      - python3.11
+      - python3.11-dev
+      - python3.11-venv
+      state: latest
+      update_cache: true

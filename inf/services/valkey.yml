@@ -1,0 +1,16 @@
+---
+# Unfortunately, ValKey isn't packaged until Ubuntu 24.04...
+- name: configure app
+  hosts:  all
+  become: true
+  tasks:
+  - name: install apt packages
+    package:
+      name:
+      - redis
+
+  - name: enable service
+    service:
+      name:    redis
+      state:   started
+      enabled: true

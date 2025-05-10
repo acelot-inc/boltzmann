@@ -1,0 +1,18 @@
+{
+  "database":   "postgresql://{{ vars.sql_username | urlencode }}:{{ vars.sql_password | urlencode }}@{{ vars.sql_hostname }}/{{ vars.sql_database }}",
+  "secret_key": "{{ vars.app_secret }}",
+  "debug":       false,
+  "development": false,
+  "testing":     false,
+  "csrf":        true,
+  "celery": {
+    "broker_url":        "redis://localhost:6379/0",
+    "result_backend":    "redis://localhost:6379/0",
+    "task_ignore_result": true
+  },
+  "boltz": {
+    "proteins": "/app/data/proteins/all.yml",
+    "cachedir": "/app/data/boltz/cache",
+    "workdir":  "/app/data/boltz"
+  }
+}
